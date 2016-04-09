@@ -31,7 +31,7 @@ int downldItems = 0;
 void p_init(){
 	if((buff_parse = malloc(sizeof(char*)*q_size)) == NULL){
 		fprintf(stderr, "cannot allocate parse-buffer");
-		exit(-1);
+		exit(1);
 	}
 }
 
@@ -84,7 +84,7 @@ char *pconsumer(){
 void d_init(){
 	if((buff_download = malloc(sizeof(char*)*dq_size)) == NULL){
 		fprintf(stderr, "error allocating download-buffer");
-		exit(-1);
+		exit(1);
 	}
 }
 
@@ -98,7 +98,7 @@ void dfill(char* link){
 	downldItems++;
 }
 
-char *dget(){
+char * dget(){
 	char *tmp = buff_download[duseptr];
 	puseptr++;
 	downldItems--;
@@ -106,15 +106,6 @@ char *dget(){
 }
 
 
-//////////////////
-// parsing function
-//////////////////
-char *parse(char* page){
-
-	
-
-
-}
 
 ///Main function! Kind of.
 int crawl(char *start_url,
@@ -128,17 +119,7 @@ int crawl(char *start_url,
 	
   	//assign queue_size to global var
   	q_size = queue_size;
-	
-	pthread_t pid[download_workers], cid[parse_workers];
-	int i;
-	for(i = 0; i < download_workers; i++)
-		pthread_create(&pid[i], NULL, pproducer, NULL);
 
-	for(i = 0; i < parse_workers; i++)
-		pthread_create(&cid[i], NULL, pconsumer, NULL);
-	
-	
-		
 	
   
 
