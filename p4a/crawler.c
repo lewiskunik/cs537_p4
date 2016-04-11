@@ -34,6 +34,8 @@ Queue *buff_download;
 void pthread_initialize(){
 	pthread_mutex_init(&p_lock, NULL);
 	pthread_mutex_init(&d_lock, NULL);
+	//pthread_cond_t pfill = PTHREAD_COND_INITIALIZER;
+	//pthread_cond_t pempty = PTHREAD_COND_INITIALIZER;
 }
 
 
@@ -135,9 +137,28 @@ char *dget(){
 //////////////////
 // parsing function
 //////////////////
-char *parse(char* page){
-	return page;
+void parse(char* page){
+
+	char *tmp, *link;
+	char **saveptr = NULL;
+	tmp = strtok_r(page, "link:", saveptr);
+	
+	while(tmp != NULL){
+		link = strtok_r(NULL, " ", saveptr);
+		dfill(link);
+		tmp = strtok_r(NULL, "link:", saveptr);
+	}
 }
+
+/////////////////
+// Downloading function
+/////////////////
+void download(char * (*_fetch_fn)(char *url)){
+	
+	
+
+}
+
 
 ///Main function! Kind of.
 int crawl(char *start_url,
