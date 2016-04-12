@@ -52,8 +52,8 @@ void p_init(){
 }
 
 //queue fill
-void padd(char* link){
-	buff_parse[pfillptr] = link;
+void padd(char* content){
+	buff_parse[pfillptr] = content;
 	pfillptr = (pfillptr + 1) % pq_size;
 	parseItems++;
 }
@@ -67,29 +67,44 @@ char* pget(){
 }
 
 //producer sequence
-void *pproducer(char *link){
-
-	pthread_mutex_lock(&p_lock);
-	//if parse queue is full, wait until consumer opens it up
-	while(parseItems == pq_size)
-		pthread_cond_wait(&pempty, &p_lock);
-	padd(link);
-	pthread_cond_signal(&pfill);
-	pthread_mutex_unlock(&p_lock);
+void *parse_thread(){
+	char *content;
+	while(1){
+		pthread_mutex_lock(&p_lock);
+		//if parse queue is full, wait until consumer opens it up
+		while(parseItems == 0)
+			pthread_cond_wait(&pfill, &p_lock);
+		content = pget();
+		pthread_cond_signal(&pempty);
+		pthread_mutex_unlock(&p_lock);
+	
+		parse(content);
+	}
 	return NULL;
 }
 
 //consumer sequence
-char *pconsumer(){
-	char *link;
-	pthread_mutex_lock(&p_lock);
-	//if parse queue is empy, wait until producer gives it something
-	while(parseItems == 0)
-		pthread_cond_wait(&pfill, &p_lock);
-	link = pget();
-	pthread_cond_signal(&pempty);
-	pthread_mutex_unlock(&p_lock);
-	return link;
+void *download_thread(){
+	char *link, *content;
+	while(1){
+		//is download queue empty? If yes, pull from parse queue and get a link!
+		pthread_mutex_lock(&d_lock);
+		//if download queue is empty, wait until parser gives it something
+		while(download_buff->downldItems == 0)
+			pthread_cond_wait(&dfill, &d_lock);
+		link = dget();
+		//TODO: give the link to the fetch function.
+		pthread_cond_signal(&dempty);
+		pthread_mutex_unlock(&d_lock);
+
+		//is parse queue full? If no, give it that content!
+		pthread_mutex_lock(&p_lock);
+		while(parseItems == q_size)
+			pthread_cond_wait(&pempty, &p_lock);
+		padd(content);
+		pthread_mutex_unlock(&p_lock);
+	}
+	return NULL;
 }
 
 //////////////////
@@ -187,9 +202,11 @@ int crawl(char *start_url,
 	
 		
 	*/
+	
   	d_init();
 	dfill("test");
-	printf(dget());
+	
+printf(dget());
 
 
   	return 0;
