@@ -46,10 +46,8 @@ void edge(char *from, char *to) {
 }
 
 int main(int argc, char *argv[]) {
-	printf("ping1\n");//TODO
   assert(argc == 2);
-  int rc = crawl(argv[1], 1, 1, 1, fetch, edge);
-	printf("ping2\n");//TODO
+  int rc = crawl(argv[1], 2, 1, 1, fetch, edge);
   assert(rc == 0);
   return 0;
 }
