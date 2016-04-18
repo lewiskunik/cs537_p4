@@ -1,3 +1,4 @@
+/* Check if the program gives the correct output for a simple graph */
 #include <stdlib.h>
 #include <stdio.h>
 #include <assert.h>
@@ -6,24 +7,18 @@
 #include <errno.h>
 #include <fcntl.h>
 #include "crawler.h"
+#include <pthread.h>
+#include <semaphore.h>
+#include "helper.h"
 
-void *Malloc(size_t size) {
-  void *r = malloc(size);
-  assert(r);
-  return r;
-}
-
-char *Strdup(const char *s) {
-  void *r = strdup(s);
-  assert(r);
-  return r;
-}
-
+pthread_mutex_t buffer_mutex;
+int fill = 0;
+char buffer[100][50];
 char *fetch(char *link) {
   int fd = open(link, O_RDONLY);
   if (fd < 0) {
-    perror("failed to open file");
-    return NULL;
+        fprintf(stderr, "failed to open file: %s", link);
+    	return NULL;
   }
   int size = lseek(fd, 0, SEEK_END);
   assert(size >= 0);
@@ -42,12 +37,12 @@ char *fetch(char *link) {
 }
 
 void edge(char *from, char *to) {
-  printf("%s -> %s\n", from, to);
+	return;
 }
 
 int main(int argc, char *argv[]) {
-  assert(argc == 2);
-  int rc = crawl(argv[1], 2, 2, 1, fetch, edge);
+  pthread_mutex_init(&buffer_mutex, NULL);
+  int rc = crawl("/u/c/s/cs537-1/ta/tests/4a/tests/files/busywait/pagea", 1, 1, 15, fetch, edge);
   assert(rc == 0);
   return 0;
 }

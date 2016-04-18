@@ -1,11 +1,11 @@
 .PHONY: all
-all : libcrawler.so file_tester web_tester 
+all : libcrawler.so file_tester web_tester concurrent_threads
 
 file_tester : file_tester.c libcrawler.so
 	gcc -g -L. -lcrawler -lpthread file_tester.c -Wall -Werror -o file_tester
 
-#concurrent_threads : concurrent_threads.c libcrawler.so
-	#gcc -g -L. -lcrawler -lpthread concurrent_threads.c -Wall -Werror -o concurrent_threads
+concurrent_threads : concurrent_threads.c libcrawler.so
+	gcc -g -L. -lcrawler -lpthread concurrent_threads.c -Wall -Werror -o concurrent_threads
 
 web_tester : web_tester.c cs537.c libcrawler.so
 	gcc -g -L. -lcrawler -lpthread web_tester.c cs537.c -Wall -Werror -o web_tester

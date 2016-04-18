@@ -8,10 +8,7 @@ build project using make
 **********************************************************************
 Trying to build project using make
 make
-gcc -g -fpic -c crawler.c -Wall -Werror -o crawler.o
-gcc -g -shared -o libcrawler.so crawler.o
-gcc -g -L. -lcrawler -lpthread file_tester.c -Wall -Werror -o file_tester
-gcc -g -L. -lcrawler -lpthread web_tester.c cs537.c -Wall -Werror -o web_tester
+make: Nothing to be done for `all'.
 
 
 test build PASSED
@@ -26,21 +23,14 @@ Calling crawl with single downloader and parser thread and check if only 1 threa
 
 **********************************************************************
 /afs/cs.wisc.edu/p/course/cs537-remzi/ta/tests/4a/tests/single_thread
-Link is: /u/c/s/cs537-1/ta/tests/4a/tests/files/num_threads/pagea and Hash index is: 178
-num awake is:    1
-num awake is:    0
 
 downloader_threads : 1
 
-parser_threads : 0
-single_thread.c:97 check (parser_threads == 1) failed: Expected to spawn 1 parser thread
-
-Failure: /afs/cs.wisc.edu/p/course/cs537-remzi/ta/tests/4a/tests/single_thread returned incorrect status code. Expected 0 got 1
+parser_threads : 1
 
 
-test single_thread FAILED (0 of 10)
+test single_thread PASSED (10 of 10)
  (Calling crawl with single downloader and parser thread and check if only 1 thread spawned)
- /afs/cs.wisc.edu/p/course/cs537-remzi/ta/tests/4a/tests/single_thread returned incorrect status code. Expected 0 got 1
 
 starting concurrent_threads
 
@@ -52,10 +42,13 @@ Checking if multiple downloader and parser threads execute concurrently
 **********************************************************************
 /afs/cs.wisc.edu/p/course/cs537-remzi/ta/tests/4a/tests/concurrent_threads
 
+downloader_threads : 5
 
-test concurrent_threads FAILED (0 of 10)
+parser_threads : 4
+
+
+test concurrent_threads PASSED (10 of 10)
  (Checking if multiple downloader and parser threads execute concurrently)
- Timelimit (120.0s) exceeded
 
 starting basic_test
 
@@ -68,9 +61,8 @@ Check if the program gives the correct output for a simple graph
 /afs/cs.wisc.edu/p/course/cs537-remzi/ta/tests/4a/tests/basic_test
 
 
-test basic_test FAILED (0 of 10)
+test basic_test PASSED (10 of 10)
  (Check if the program gives the correct output for a simple graph)
- Timelimit (120.0s) exceeded
 
 starting simple_loop
 
@@ -81,51 +73,10 @@ Check if the program gives the correct output for a simple loop
 
 **********************************************************************
 /afs/cs.wisc.edu/p/course/cs537-remzi/ta/tests/4a/tests/simple_loop
-Link is: /u/c/s/cs537-1/ta/tests/4a/tests/files/simple_loop/pagea and Hash index is: 20
-num awake is:    3
-num awake is:    1
-file is: /u/c/s/cs537-1/ta/tests/4a/tests/files/simple_loop/pagea
-link found: /u/c/s/cs537-1/ta/tests/4a/tests/files/simple_loop/pageb
-Link is: /u/c/s/cs537-1/ta/tests/4a/tests/files/simple_loop/pageb and Hash index is: 66
-num awake is:    1
-num awake is:    0
-file is: /u/c/s/cs537-1/ta/tests/4a/tests/files/simple_loop/pageb
-link found: /u/c/s/cs537-1/ta/tests/4a/tests/files/simple_loop/pagea
-Link is: /u/c/s/cs537-1/ta/tests/4a/tests/files/simple_loop/pagea and Hash index is: 83
-file is: /u/c/s/cs537-1/ta/tests/4a/tests/files/simple_loop/pagea
-link found: /u/c/s/cs537-1/ta/tests/4a/tests/files/simple_loop/pageb
-Link is: /u/c/s/cs537-1/ta/tests/4a/tests/files/simple_loop/pageb and Hash index is: 160
-file is: /u/c/s/cs537-1/ta/tests/4a/tests/files/simple_loop/pageb
-link found: /u/c/s/cs537-1/ta/tests/4a/tests/files/simple_loop/pagea
-Link is: /u/c/s/cs537-1/ta/tests/4a/tests/files/simple_loop/pagea and Hash index is: 57
-file is: /u/c/s/cs537-1/ta/tests/4a/tests/files/simple_loop/pagea
-link found: /u/c/s/cs537-1/ta/tests/4a/tests/files/simple_loop/pageb
-Link is: /u/c/s/cs537-1/ta/tests/4a/tests/files/simple_loop/pageb and Hash index is: 16
-file is: /u/c/s/cs537-1/ta/tests/4a/tests/files/simple_loop/pageb
-link found: /u/c/s/cs537-1/ta/tests/4a/tests/files/simple_loop/pagea
-Link is: /u/c/s/cs537-1/ta/tests/4a/tests/files/simple_loop/pagea and Hash index is: 180
-file is: /u/c/s/cs537-1/ta/tests/4a/tests/files/simple_loop/pagea
-link found: /u/c/s/cs537-1/ta/tests/4a/tests/files/simple_loop/pageb
-Link is: /u/c/s/cs537-1/ta/tests/4a/tests/files/simple_loop/pageb and Hash index is: 17
-file is: /u/c/s/cs537-1/ta/tests/4a/tests/files/simple_loop/pageb
-link found: /u/c/s/cs537-1/ta/tests/4a/tests/files/simple_loop/pagea
-Link is: /u/c/s/cs537-1/ta/tests/4a/tests/files/simple_loop/pagea and Hash index is: 180
-found used link
-wrong size
-Actual Output (sorted):
-
-pagea->pageb
-
-Expected Output (sorted): 
-
-pagea->pageb
-pageb->pagea
-Failure: /afs/cs.wisc.edu/p/course/cs537-remzi/ta/tests/4a/tests/simple_loop returned incorrect status code. Expected 0 got 1
 
 
-test simple_loop FAILED (0 of 10)
+test simple_loop PASSED (10 of 10)
  (Check if the program gives the correct output for a simple loop)
- /afs/cs.wisc.edu/p/course/cs537-remzi/ta/tests/4a/tests/simple_loop returned incorrect status code. Expected 0 got 1
 
 starting complex_loop
 
@@ -136,37 +87,10 @@ Check if the program gives the correct output for a complex graph containing a l
 
 **********************************************************************
 /afs/cs.wisc.edu/p/course/cs537-remzi/ta/tests/4a/tests/complex_loop
-Link is: /u/c/s/cs537-1/ta/tests/4a/tests/files/complex_loop/pagea and Hash index is: 101
-num awake is:    7
-num awake is:    1
-num awake is:    0
-file is: /u/c/s/cs537-1/ta/tests/4a/tests/files/complex_loop/pagea
-link found: /u/c/s/cs537-1/ta/tests/4a/tests/files/complex_loop/pageb
-Link is: /u/c/s/cs537-1/ta/tests/4a/tests/files/complex_loop/pageb and Hash index is: 166
-link found: /u/c/s/cs537-1/ta/tests/4a/tests/files/complex_loop/pagec
-Link is: /u/c/s/cs537-1/ta/tests/4a/tests/files/complex_loop/pagec and Hash index is: 47
-wrong size
-Actual Output (sorted):
 
 
-Expected Output (sorted): 
-
-pagea->pageb
-pagea->pagec
-pagea->paged
-pagea->pagee
-pageb->pagec
-pagec->paged
-pagec->pagef
-paged->pagea
-paged->pageb
-paged->paged
-Failure: /afs/cs.wisc.edu/p/course/cs537-remzi/ta/tests/4a/tests/complex_loop returned incorrect status code. Expected 0 got 1
-
-
-test complex_loop FAILED (0 of 10)
+test complex_loop PASSED (10 of 10)
  (Check if the program gives the correct output for a complex graph containing a loop)
- /afs/cs.wisc.edu/p/course/cs537-remzi/ta/tests/4a/tests/complex_loop returned incorrect status code. Expected 0 got 1
 
 starting complex_parsing
 
@@ -177,12 +101,10 @@ Check if the program parses the file correctly and gives the right output
 
 **********************************************************************
 /afs/cs.wisc.edu/p/course/cs537-remzi/ta/tests/4a/tests/complex_parsing
-failed to open file: (Failure: /afs/cs.wisc.edu/p/course/cs537-remzi/ta/tests/4a/tests/complex_parsing returned incorrect status code. Expected 0 got -11
 
 
-test complex_parsing FAILED (0 of 10)
+test complex_parsing PASSED (10 of 10)
  (Check if the program parses the file correctly and gives the right output)
- /afs/cs.wisc.edu/p/course/cs537-remzi/ta/tests/4a/tests/complex_parsing returned incorrect status code. Expected 0 got -11
 
 starting small_buffer
 
@@ -193,31 +115,10 @@ Check if the program works correctly when buffer is small and there is only a si
 
 **********************************************************************
 /afs/cs.wisc.edu/p/course/cs537-remzi/ta/tests/4a/tests/small_buffer
-Link is: /u/c/s/cs537-1/ta/tests/4a/tests/files/small_buffer/pagea and Hash index is: 160
-num awake is:    1
-num awake is:    0
-file is: /u/c/s/cs537-1/ta/tests/4a/tests/files/small_buffer/pagea
-link found: link:/u/c/s/cs537-1/ta/tests/4a/tests/files/small_buffer/pageb
-Link is: link:/u/c/s/cs537-1/ta/tests/4a/tests/files/small_buffer/pageb and Hash index is: 28
-link found: /u/c/s/cs537-1/ta/tests/4a/tests/files/small_buffer/pagec
-Link is: /u/c/s/cs537-1/ta/tests/4a/tests/files/small_buffer/pagec and Hash index is: 130
-wrong size
-Actual Output (sorted):
 
 
-Expected Output (sorted): 
-
-pagea->pageb
-pagea->pagec
-pagea->paged
-pagea->pagee
-pagea->pagef
-Failure: /afs/cs.wisc.edu/p/course/cs537-remzi/ta/tests/4a/tests/small_buffer returned incorrect status code. Expected 0 got 1
-
-
-test small_buffer FAILED (0 of 10)
+test small_buffer PASSED (10 of 10)
  (Check if the program works correctly when buffer is small and there is only a single thread but parser parses a lot of links)
- /afs/cs.wisc.edu/p/course/cs537-remzi/ta/tests/4a/tests/small_buffer returned incorrect status code. Expected 0 got 1
 
 starting small_buffer_2
 
@@ -228,12 +129,10 @@ Similar to previous test but now there are multiple downloader threads, so shoul
 
 **********************************************************************
 /afs/cs.wisc.edu/p/course/cs537-remzi/ta/tests/4a/tests/small_buffer_2
-failed to open file: link:/u/c/s/cs537-1/ta/tests/4a/tests/files/small_buffer/pagebFailure: /afs/cs.wisc.edu/p/course/cs537-remzi/ta/tests/4a/tests/small_buffer_2 returned incorrect status code. Expected 0 got -11
 
 
-test small_buffer_2 FAILED (0 of 10)
+test small_buffer_2 PASSED (10 of 10)
  (Similar to previous test but now there are multiple downloader threads, so should be able to parse all links and put it in buffer as the buffer gets consumed by multiple threads)
- /afs/cs.wisc.edu/p/course/cs537-remzi/ta/tests/4a/tests/small_buffer_2 returned incorrect status code. Expected 0 got -11
 
 starting too_many_threads
 
@@ -244,20 +143,13 @@ Calling crawl with single downloader and parser thread and check if only 1 threa
 
 **********************************************************************
 /afs/cs.wisc.edu/p/course/cs537-remzi/ta/tests/4a/tests/too_many_threads
-Link is: /u/c/s/cs537-1/ta/tests/4a/tests/files/too_many_threads/pagea and Hash index is: 122
-num awake is:    5
-num awake is:    2
-num awake is:    1
-num awake is:    0
 
-downloader_threads : 1
+downloader_threads : 7
 
-parser_threads : 0
-
-*** Need to pass concurrent_threads test to get points for this test ***
+parser_threads : 1
 
 
-test too_many_threads PASSED (0  of 10)
+test too_many_threads PASSED (10 of 10)
  (Calling crawl with single downloader and parser thread and check if only 1 thread spawned)
 
 **********************************************************************
@@ -265,43 +157,33 @@ Summary:
 test build PASSED
  (build project using make)
 
-test single_thread FAILED (0 of 10)
+test single_thread PASSED (10 of 10)
  (Calling crawl with single downloader and parser thread and check if only 1 thread spawned)
- /afs/cs.wisc.edu/p/course/cs537-remzi/ta/tests/4a/tests/single_thread returned incorrect status code. Expected 0 got 1
 
-test concurrent_threads FAILED (0 of 10)
+test concurrent_threads PASSED (10 of 10)
  (Checking if multiple downloader and parser threads execute concurrently)
- Timelimit (120.0s) exceeded
 
-test basic_test FAILED (0 of 10)
+test basic_test PASSED (10 of 10)
  (Check if the program gives the correct output for a simple graph)
- Timelimit (120.0s) exceeded
 
-test simple_loop FAILED (0 of 10)
+test simple_loop PASSED (10 of 10)
  (Check if the program gives the correct output for a simple loop)
- /afs/cs.wisc.edu/p/course/cs537-remzi/ta/tests/4a/tests/simple_loop returned incorrect status code. Expected 0 got 1
 
-test complex_loop FAILED (0 of 10)
+test complex_loop PASSED (10 of 10)
  (Check if the program gives the correct output for a complex graph containing a loop)
- /afs/cs.wisc.edu/p/course/cs537-remzi/ta/tests/4a/tests/complex_loop returned incorrect status code. Expected 0 got 1
 
-test complex_parsing FAILED (0 of 10)
+test complex_parsing PASSED (10 of 10)
  (Check if the program parses the file correctly and gives the right output)
- /afs/cs.wisc.edu/p/course/cs537-remzi/ta/tests/4a/tests/complex_parsing returned incorrect status code. Expected 0 got -11
 
-test small_buffer FAILED (0 of 10)
+test small_buffer PASSED (10 of 10)
  (Check if the program works correctly when buffer is small and there is only a single thread but parser parses a lot of links)
- /afs/cs.wisc.edu/p/course/cs537-remzi/ta/tests/4a/tests/small_buffer returned incorrect status code. Expected 0 got 1
 
-test small_buffer_2 FAILED (0 of 10)
+test small_buffer_2 PASSED (10 of 10)
  (Similar to previous test but now there are multiple downloader threads, so should be able to parse all links and put it in buffer as the buffer gets consumed by multiple threads)
- /afs/cs.wisc.edu/p/course/cs537-remzi/ta/tests/4a/tests/small_buffer_2 returned incorrect status code. Expected 0 got -11
 
-test too_many_threads PASSED (0  of 10)
+test too_many_threads PASSED (10 of 10)
  (Calling crawl with single downloader and parser thread and check if only 1 thread spawned)
 
-*** Need to pass concurrent_threads test to get points for this test ***
-
-Passed 1 of 10 tests.
-Overall 1 of 10
-Points 0 of 90
+Passed 10 of 10 tests.
+Overall 10 of 10
+Points 90 of 90
