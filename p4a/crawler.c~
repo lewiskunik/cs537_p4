@@ -14,7 +14,6 @@
 typedef struct HashNode_t{
 	struct HashNode_t *next;
 	char *link;
-	//int done;
 }HashNode;
 
 //193 is a prime number! That's the size of our array.
@@ -34,10 +33,11 @@ typedef struct Parse_queue_t{
 
 pthread_mutex_t p_lock;
 pthread_mutex_t d_lock;
+pthread_mutex_t t_lock;
 pthread_cond_t dfull = PTHREAD_COND_INITIALIZER;
 pthread_cond_t dempty = PTHREAD_COND_INITIALIZER;
 pthread_cond_t pempty = PTHREAD_COND_INITIALIZER;
-//pthread_cond_t done = PTHREAD_COND_INITIALIZER;
+pthread_cond_t done = PTHREAD_COND_INITIALIZER;
 
 char** buff_download;
 int dfillptr = 0;
@@ -58,6 +58,7 @@ void (*_edge_function)(char *, char *);
 void pthread_initialize(){
 	pthread_mutex_init(&p_lock, NULL);
 	pthread_mutex_init(&d_lock, NULL);
+	pthread_mutex_init(&t_lock, NULL);
 
 }
 
@@ -95,7 +96,7 @@ uint32_t fletcher32( uint16_t const *data, size_t words )
 //returns 1 if link already exists in hash table, 0 if link does not yet exist
 int check_hash(char *link){
 
-	
+	//int index = fletcher32((uint16_t const *)link % HASH_TABLE_SIZE;
 	int index = fletcher32((uint16_t const *)link, strlen(link)) % HASH_TABLE_SIZE;
 	printf("Link is: %s and Hash index is: %d\n", link, index);
 	int first_time = 1;
@@ -115,7 +116,7 @@ int check_hash(char *link){
 	}
 	HashNode *new_node = malloc(sizeof(HashNode *));
 	new_node->next = NULL;
-	//new_node->done = 0;
+	
 	new_node->link = link;
 	if(first_time)
 		HashTable[index] = new_node;
@@ -125,27 +126,7 @@ int check_hash(char *link){
 	return 0;
 }
 
-//sets the hash node of the link in the table to the done state.
-/*
-void set_hash_done(char *link){
 
-	int index = fletcher32((uint16_t const *)link, strlen(link)) % HASH_TABLE_SIZE;
-	HashNode *check_node;
-	check_node = HashTable[index];
-	//should return the node because it has already been downloaded
-	while(check_node != NULL){		
-		if((strcmp(link, check_node->link)) == 0){
-			printf("found used link\n");
-			continue;
-		}
-		else
-			check_node = check_node->next;
-	}
-	if(check_node != NULL)
-		check_node->done = 1;
-	//else: do nothing. return from function. should never actually leave without setting done to 1
-}
-*/
 
 
 ///////////////////////
@@ -211,11 +192,12 @@ void padd(char *prev_link, char* content){
 		(buff_parse->tail)->next = tmp;
 		buff_parse->tail = tmp;
 	}
+
 	buff_parse->parseItems++;
+
 }
 
-Node *pget(){
-	Node *tmp = buff_parse->head;
+Node *pget(){	Node *tmp = buff_parse->head;
 	buff_parse->head = tmp->next;
 	buff_parse->parseItems--;
 	
@@ -241,11 +223,11 @@ void parse(char* prev_link, char* page){
 		printf("link found: %s\n", link);
 		pthread_mutex_lock(&d_lock);
 		//wait on condition variable if download queue is full
-		if(downldItems == dq_size)
-			num_awake--;
+		//if(downldItems == dq_size)
+			//num_awake--;
 		while(downldItems == dq_size)
 			pthread_cond_wait(&dfull, &d_lock);
-		num_awake++;
+		//num_awake++;
 		if(!check_hash(link)){
 			dfill(link);//means that the link has not been downloaded before
 			pthread_cond_signal(&dempty);
@@ -277,12 +259,25 @@ void *parse_thread(){
 	while(1){
 		//printf("parser\n");
 		pthread_mutex_lock(&p_lock);
-		if(buff_parse->parseItems == 0)
+		/*pthread_mutex_lock(&t_lock);
+		
+		if(buff_parse->parseItems == 0){
 			num_awake--;
+			pthread_cond_signal(&done);
+		}
+		pthread_mutex_unlock(&t_lock);*/
+
+
 		//if parse queue is empty, wait until dowloader gives something
-		while(buff_parse->parseItems == 0)
+		while(buff_parse->parseItems == 0){
+			pthread_mutex_lock(&t_lock);
+			num_awake--;
+			pthread_mutex_unlock(&t_lock);
 			pthread_cond_wait(&pempty, &p_lock);
-		num_awake++;
+			pthread_mutex_lock(&t_lock);
+			num_awake++;
+			pthread_mutex_unlock(&t_lock);
+		}
 		page_content = pget();
 		pthread_mutex_unlock(&p_lock);
 		parse(page_content->parent_link, page_content->data); //will implement the pthread_wait within
@@ -295,16 +290,32 @@ void *parse_thread(){
 void *download_thread(){
 	
 	while(1){
+		pthread_mutex_lock(&d_lock);
+		/*pthread_mutex_lock(&t_lock);
+		if(downldItems == 0){
+			num_awake--;
+			pthread_cond_signal(&done);
+		}	
+		pthread_mutex_unlock(&t_lock);*/
+
 		//printf("downloader\n");
 		//is download queue empty? If yes, pull from parse queue and get a link!
-		pthread_mutex_lock(&d_lock);
+		
 		//if download queue is empty, wait until parser gives it something
 		//printf("%d\n", downldItems);
-		if(downldItems == 0)
+		while(downldItems == 0){
+			pthread_mutex_lock(&t_lock);
 			num_awake--;
-		while(downldItems == 0)
+			pthread_mutex_unlock(&t_lock);
 			pthread_cond_wait(&dempty, &d_lock);
-		num_awake++;
+				// if (work == 0)
+				//	return;
+			pthread_mutex_lock(&t_lock);
+			num_awake++;
+			pthread_mutex_unlock(&t_lock);
+		}
+		
+
 		//pull link off of download queue
 		char *link = dget();
 		pthread_cond_signal(&dfull);
@@ -313,9 +324,12 @@ void *download_thread(){
 
 		char *page = _fetch_function(link);
 		//add content to parse queue
+		pthread_mutex_lock(&p_lock);
 		padd(link, page);
-		//set_hash_done(link);
 		pthread_cond_signal(&pempty);
+		pthread_mutex_unlock(&p_lock);
+		//set_hash_done(link);
+
 
 	}
 	return NULL;
@@ -353,18 +367,31 @@ int crawl(char *start_url,
 	int i;
 	
 	for(i = 0; i < download_workers; i++){
+		pthread_mutex_lock(&t_lock);
 		num_awake++;
+		pthread_mutex_unlock(&t_lock);
 		pthread_create(&pid[i], NULL, download_thread, NULL);
 	}
 	for(i = 0; i < parse_workers; i++){
+		pthread_mutex_lock(&t_lock);
 		num_awake++;
+		pthread_mutex_unlock(&t_lock);
 		pthread_create(&cid[i], NULL, parse_thread, NULL);
 	}
-		
-	while(num_awake > 0)
-  		sleep(1);
+	
+	pthread_mutex_lock(&t_lock);
+	while(num_awake > 0){
+		pthread_cond_wait(&done, &t_lock);
+		/*if (num_awake == 0) {
+			pthread_cond_broadcast(&d_lock);
+			pthread_cond_broadcast(&p_lock);
+		}*/
+		printf("num awake is:    %d\n", num_awake);
+	}
+  		//sleep(1);
 
-
+	pthread_mutex_unlock(&t_lock);
+	
   	return 0;
 }
 
