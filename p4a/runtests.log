@@ -144,7 +144,7 @@ Calling crawl with single downloader and parser thread and check if only 1 threa
 **********************************************************************
 /afs/cs.wisc.edu/p/course/cs537-remzi/ta/tests/4a/tests/too_many_threads
 
-downloader_threads : 7
+downloader_threads : 6
 
 parser_threads : 1
 
